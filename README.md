@@ -1,2 +1,2 @@
 # JavaFileCipher
-Small library that can encrypt/decrypt files with AES encryption.
+Small library that can encrypt / decrypt files with AES encryption.
