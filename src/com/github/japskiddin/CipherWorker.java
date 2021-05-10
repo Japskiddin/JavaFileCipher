@@ -45,21 +45,33 @@ public class CipherWorker {
 
     for (Option option : optsList) {
       switch (option.getFlag()) {
-        case "key" -> key = option.getOpt();
-        case "dst" -> dst = option.getOpt();
-        case "src" -> src = option.getOpt();
+        case "key":
+          key = option.getOpt();
+          break;
+        case "dst":
+          dst = option.getOpt();
+          break;
+        case "src":
+          src = option.getOpt();
+          break;
       }
     }
 
     for (String opt : doubleOptsList) {
       switch (opt) {
-        case "version" -> {
+        case "version":
           Package p = this.getClass().getPackage();
           System.out.println("Version: " + p.getImplementationVersion());
-        }
-        case "help" -> showHelp();
-        case "decrypt" -> doCipher(Cipher.DECRYPT_MODE, src, dst, key);
-        case "encrypt" -> doCipher(Cipher.ENCRYPT_MODE, src, dst, key);
+          break;
+        case "help":
+          showHelp();
+          break;
+        case "decrypt":
+          doCipher(Cipher.DECRYPT_MODE, src, dst, key);
+          break;
+        case "encrypt":
+          doCipher(Cipher.ENCRYPT_MODE, src, dst, key);
+          break;
       }
     }
   }
