@@ -16,7 +16,6 @@ public class CipherWorker {
    * @param args Entered parameters.
    */
   public void checkArguments(String[] args) {
-    List<String> argsList = new ArrayList<>();
     List<Option> optsList = new ArrayList<>();
     List<String> doubleOptsList = new ArrayList<>();
 
@@ -39,8 +38,6 @@ public class CipherWorker {
           optsList.add(new Option(args[i].substring(1), args[i + 1]));
           i++;
         }
-      } else {// arg
-        argsList.add(args[i]);
       }
     }
 
@@ -48,29 +45,21 @@ public class CipherWorker {
 
     for (Option option : optsList) {
       switch (option.getFlag()) {
-        case "key":
-          key = option.getOpt();
-          break;
-        case "dst":
-          dst = option.getOpt();
-          break;
-        case "src":
-          src = option.getOpt();
-          break;
+        case "key" -> key = option.getOpt();
+        case "dst" -> dst = option.getOpt();
+        case "src" -> src = option.getOpt();
       }
     }
 
     for (String opt : doubleOptsList) {
       switch (opt) {
-        case "help":
-          showHelp();
-          break;
-        case "decrypt":
-          doCipher(Cipher.DECRYPT_MODE, src, dst, key);
-          break;
-        case "encrypt":
-          doCipher(Cipher.ENCRYPT_MODE, src, dst, key);
-          break;
+        case "version" -> {
+          Package p = this.getClass().getPackage();
+          System.out.println("Version: " + p.getImplementationVersion());
+        }
+        case "help" -> showHelp();
+        case "decrypt" -> doCipher(Cipher.DECRYPT_MODE, src, dst, key);
+        case "encrypt" -> doCipher(Cipher.ENCRYPT_MODE, src, dst, key);
       }
     }
   }
@@ -150,7 +139,8 @@ public class CipherWorker {
   private void showHelp() {
     System.out.println(
         "Usage: [--encrypt | --decrypt | --help] -src <path> -dst <path> -key <key>");
-    System.out.println("\n--help - Shows help information");
+    System.out.println("\n--help - Show help information");
+    System.out.println("--version - Show library version");
     System.out.println("--encrypt - Encrypt files");
     System.out.println("--decrypt - Decrypt files");
     System.out.println("-src <path> - Path to folder with source files");
