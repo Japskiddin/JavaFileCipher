@@ -1,6 +1,4 @@
-package test;
-
-import com.github.japskiddin.CipherWorker;
+package com.github.japskiddin;
 
 class MainTest {
   @org.junit.jupiter.api.Test
@@ -11,7 +9,7 @@ class MainTest {
     new CipherWorker().checkArguments(argsEncrypt);
 
     String[] argsDecrypt =
-        new String[] { "--decrypt", "-src", "./outputs_encrypted", "-dst", "./", "-key", key };
+        new String[] { "--decrypt", "-src", "./outputs_encrypted/test", "-dst", "./", "-key", key };
     new CipherWorker().checkArguments(argsDecrypt);
   }
 }

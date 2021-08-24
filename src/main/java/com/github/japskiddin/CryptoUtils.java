@@ -23,6 +23,7 @@ class CryptoUtils {
 
   /**
    * Encrypt file
+   *
    * @param key Cipher key
    * @param inputFile Source file
    * @param outputFile Destination file
@@ -34,6 +35,7 @@ class CryptoUtils {
 
   /**
    * Decrypt file
+   *
    * @param key Cipher key
    * @param inputFile Source file
    * @param outputFile Destination file
@@ -60,6 +62,7 @@ class CryptoUtils {
       outputStream.write(outputBytes);
 
       inputStream.close();
+      outputStream.flush();
       outputStream.close();
     } catch (NoSuchPaddingException | NoSuchAlgorithmException | InvalidKeyException | BadPaddingException
         | IllegalBlockSizeException | IOException ex) {

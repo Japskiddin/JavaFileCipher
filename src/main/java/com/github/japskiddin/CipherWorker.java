@@ -45,33 +45,21 @@ public class CipherWorker {
 
     for (Option option : optsList) {
       switch (option.getFlag()) {
-        case "key":
-          key = option.getOpt();
-          break;
-        case "dst":
-          dst = option.getOpt();
-          break;
-        case "src":
-          src = option.getOpt();
-          break;
+        case "key" -> key = option.getOpt();
+        case "dst" -> dst = option.getOpt();
+        case "src" -> src = option.getOpt();
       }
     }
 
     for (String opt : doubleOptsList) {
       switch (opt) {
-        case "version":
+        case "version" -> {
           Package p = this.getClass().getPackage();
           System.out.println("Version: " + p.getImplementationVersion());
-          break;
-        case "help":
-          showHelp();
-          break;
-        case "decrypt":
-          doCipher(Cipher.DECRYPT_MODE, src, dst, key);
-          break;
-        case "encrypt":
-          doCipher(Cipher.ENCRYPT_MODE, src, dst, key);
-          break;
+        }
+        case "help" -> showHelp();
+        case "decrypt" -> doCipher(Cipher.DECRYPT_MODE, src, dst, key);
+        case "encrypt" -> doCipher(Cipher.ENCRYPT_MODE, src, dst, key);
       }
     }
   }
@@ -95,22 +83,23 @@ public class CipherWorker {
       throw new IllegalArgumentException("Expected arg \"-key\"");
     }
 
-    File dir = new File(src);
-    if (!dir.exists()) {
+    File srcDir = new File(src);
+    if (!srcDir.exists()) {
       throw new NullPointerException("Folder doesn't exists.");
     }
 
-    if (!dir.isDirectory()) {
+    if (!srcDir.isDirectory()) {
       throw new NullPointerException("File isn't directory!");
     }
 
-    File[] files = dir.listFiles();
+    File[] files = srcDir.listFiles();
     if (files == null || files.length == 0) {
       throw new NullPointerException("Folder is empty.");
     }
 
     File dstDir =
-        new File(dst, "outputs" + (type == Cipher.ENCRYPT_MODE ? "_encrypted" : "_decrypted"));
+        new File(dst + File.separator + "outputs" + (type == Cipher.ENCRYPT_MODE ? "_encrypted"
+            : "_decrypted") + File.separator + srcDir.getName());
     if (dstDir.exists()) {
       try {
         Utils.deleteDir(dstDir);
@@ -126,23 +115,46 @@ public class CipherWorker {
       throw new NullPointerException("Can't create output folder.");
     }
 
-    for (File srcFile : files) {
-      File dstFile = new File(dstDir, srcFile.getName());
-      try {
-        if (type == Cipher.ENCRYPT_MODE) {
-          CryptoUtils.encrypt(key, srcFile, dstFile);
-        } else {
-          CryptoUtils.decrypt(key, srcFile, dstFile);
-        }
-      } catch (CryptoException ex) {
-        System.out.println(ex.getMessage());
-        ex.printStackTrace();
-        return;
-      }
-    }
+    cipherFiles(files, dstDir, type, key);
 
     System.out.println(
         (type == Cipher.ENCRYPT_MODE ? "Encryption" : "Decryption") + " done successfully!");
+  }
+
+  /**
+   * Cipher files.
+   *
+   * @param files List of files
+   * @param dir Source directory
+   * @param type Type of operation (encrypt / decrypt).
+   * @param key Cipher key.
+   */
+  private void cipherFiles(File[] files, File dir, int type, String key) {
+    for (File srcFile : files) {
+      if (srcFile.isDirectory()) {
+        File[] list = srcFile.listFiles();
+        if (list != null && list.length > 0) {
+          File dstDir = new File(dir, srcFile.getName());
+          boolean created = dstDir.mkdirs();
+          if (created) {
+            cipherFiles(list, dstDir, type, key);
+          }
+        }
+      } else {
+        File dstFile = new File(dir, srcFile.getName());
+        try {
+          if (type == Cipher.ENCRYPT_MODE) {
+            CryptoUtils.encrypt(key, srcFile, dstFile);
+          } else {
+            CryptoUtils.decrypt(key, srcFile, dstFile);
+          }
+        } catch (CryptoException ex) {
+          System.out.println(ex.getMessage());
+          ex.printStackTrace();
+          return;
+        }
+      }
+    }
   }
 
   /**
